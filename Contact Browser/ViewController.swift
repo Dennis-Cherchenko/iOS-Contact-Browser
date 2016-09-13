@@ -34,6 +34,8 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
         tableview.dataSource = self
         tableview.delegate = self
         
+        filtered = myarray
+        
         
     }
     
@@ -78,20 +80,27 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
     
     
     internal func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return myarray.count
+        return filtered.count
     }
     
     
     internal func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "customcell", for: indexPath as IndexPath)
-        cell.textLabel?.text = myarray[indexPath.item]
+        cell.textLabel?.text = filtered[indexPath.item]
         return cell
     }
     
     
     
     
-    
+    private func updateCells(_ tableView: UITableView, cellForRowAt indexPath: IndexPath){
+        let cell = tableView.dequeueReusableCell(withIdentifier: "customcell", for: indexPath as IndexPath)
+        cell.textLabel?.text = filtered[indexPath.item]
+        //return cell
+        
+        
+        
+    }
     
     
     
@@ -99,22 +108,28 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
     private func getContacts() {
         
         
+        print(searchString)
+        
         let store = CNContactStore()
-        
-        //print(searchString)
-        
-        
         let predicate = CNContact.predicateForContacts(matchingName: searchString)
         let toFetch = [CNContactGivenNameKey, CNContactFamilyNameKey]
+        
         do{
             let contacts = try store.unifiedContacts(
                 matching: predicate, keysToFetch: toFetch as [CNKeyDescriptor])
             
+            filtered = []
+            
             for contact in contacts{
+                filtered.append(contact.givenName + " " + contact.familyName)
+                
                 print(contact.givenName)
                 print(contact.familyName)
+                //print(contact.phoneNumbers)
                 
             }
+            
+            self.tableview.reloadData()
             
         } catch let err{
             print(err)
