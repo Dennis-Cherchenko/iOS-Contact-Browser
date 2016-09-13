@@ -9,17 +9,20 @@
 import UIKit
 import Contacts
 
-class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate{
+class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate, UITableViewDataSource{
     
     
     
     @IBOutlet weak var searchBar: UISearchBar!
+    
+    @IBOutlet var tableview: UITableView!
  
     var searchString = ""
     
     //Change
     
     
+    let myarray = ["item1", "item2", "item3"]
     
     var filtered:[String] = []
     
@@ -27,9 +30,16 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
         super.viewDidLoad()
         
         searchBar.delegate = self
-
+        
+        tableview.dataSource = self
+        tableview.delegate = self
         
         
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        tableview.reloadData()
     }
     
     override func didReceiveMemoryWarning() {
@@ -67,7 +77,16 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
     
     
     
+    internal func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return myarray.count
+    }
     
+    
+    internal func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "customcell", for: indexPath as IndexPath)
+        cell.textLabel?.text = myarray[indexPath.item]
+        return cell
+    }
     
     
     
