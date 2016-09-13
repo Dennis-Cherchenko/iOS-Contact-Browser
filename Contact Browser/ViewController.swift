@@ -17,8 +17,7 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
  
     var searchString = ""
     
-    
-    @IBOutlet weak var tableView: UITableView!
+    //Change
     
     
     
@@ -28,8 +27,7 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
         super.viewDidLoad()
         
         searchBar.delegate = self
-        //tableView.dataSource = self
-        tableView.delegate = self
+
         
         
     }
@@ -55,33 +53,28 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
     }
     
     
-    
-    /*
-    
-    // UITableViewDataSource Functions
-    
-    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 7
-    }
-    
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) ->   UITableViewCell {
-        let cell = UITableViewCell()
-        let label = UILabel()
-        label.text = "Hello Man"
-        cell.addSubview(label)
-        return cell
-    }
-    
-    
-    // UITableViewDelegate Functions
-    
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        return 50
-    }
+
     
     
     
-    */
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     private func getContacts() {

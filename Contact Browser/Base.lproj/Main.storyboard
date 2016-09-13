@@ -35,7 +35,7 @@
                                         <rect key="frame" x="0.0" y="72" width="299" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="zVC-4m-EMa" id="gv4-7w-sjT">
-                                            <frame key="frameInset" width="299" height="43"/>
+                                            <frame key="frameInset" width="299" height="44"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                         </tableViewCellContentView>
                                     </tableViewCell>
@@ -51,7 +51,6 @@
                     </view>
                     <connections>
                         <outlet property="searchBar" destination="zSG-ye-VTQ" id="Jn8-5g-FKy"/>
-                        <outlet property="tableView" destination="mUs-81-nMo" id="WF0-dp-3us"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
