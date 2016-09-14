@@ -119,28 +119,61 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
         
         print("Got Here")
         
-//        if(searchString == ""){
-//        
-//        
-//        }else{
-//
-//        
-//        }
+        if(searchString == ""){
+        
+            let contactStore = CNContactStore()
+            //fetchRequest.unifyResults = true //True should be the default option
+            do {
+                
+                
+                
+                
+                var contactsWithPhoneNumber = [CNContact]()
+                let fetchRequest = CNContactFetchRequest(keysToFetch: [CNContactGivenNameKey as CNKeyDescriptor, CNContactFamilyNameKey as CNKeyDescriptor, CNContactPhoneNumbersKey as CNKeyDescriptor])
+               
+                
+                try! contactStore.enumerateContacts(with: fetchRequest) { contact, stop in
+                    contactsWithPhoneNumber.append(contact)
+                    self.filtered.append(contact.givenName + " " + contact.familyName + "            " + contact.phoneNumbers[0].value.stringValue)
+                        
+                    
+                
+                    self.tableview.reloadData()
+                    
+
+                }
+                
+                
+                
+                
+                
+                
+            }catch{
+                print("Handle the error please")
+            }
+            
+            
+            
+        
+        }else{
+            do {
+                let contacts = try store.unifiedContacts( matching: predicate, keysToFetch: toFetch as [CNKeyDescriptor])
+                
+                for contact in contacts{
+                    filtered.append(contact.givenName + " " + contact.familyName + "            " + contact.phoneNumbers[0].value.stringValue)
+                }
+                
+                self.tableview.reloadData()
+                
+            } catch let err{
+                print(err)
+            }
+        
+        }
         
      
         
-        do {
-            let contacts = try store.unifiedContacts( matching: predicate, keysToFetch: toFetch as [CNKeyDescriptor])
-            
-            for contact in contacts{
-                filtered.append(contact.givenName + " " + contact.familyName + "            " + contact.phoneNumbers[0].value.stringValue)
-            }
- 
-            self.tableview.reloadData()
-            
-        } catch let err{
-            print(err)
-        }
+        
     
     }
     
