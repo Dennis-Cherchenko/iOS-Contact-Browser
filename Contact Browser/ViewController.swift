@@ -15,7 +15,9 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
     
     @IBOutlet weak var searchBar: UISearchBar!
     
-    @IBOutlet var tableview: UITableView!
+    
+    @IBOutlet weak var tableview: UITableView!
+    
  
     var searchString = ""
     
@@ -117,36 +119,21 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
         
         filtered = []
         
-        print("Got Here")
         
         if(searchString == ""){
         
             let contactStore = CNContactStore()
-            //fetchRequest.unifyResults = true //True should be the default option
+
             do {
-                
-                
-                
-                
-                var contactsWithPhoneNumber = [CNContact]()
                 let fetchRequest = CNContactFetchRequest(keysToFetch: [CNContactGivenNameKey as CNKeyDescriptor, CNContactFamilyNameKey as CNKeyDescriptor, CNContactPhoneNumbersKey as CNKeyDescriptor])
                
                 
                 try! contactStore.enumerateContacts(with: fetchRequest) { contact, stop in
-                    contactsWithPhoneNumber.append(contact)
+                    
                     self.filtered.append(contact.givenName + " " + contact.familyName + "            " + contact.phoneNumbers[0].value.stringValue)
-                        
-                    
-                
                     self.tableview.reloadData()
-                    
-
                 }
-                
-                
-                
-                
-                
+
                 
             }catch{
                 print("Handle the error please")
