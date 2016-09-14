@@ -113,62 +113,29 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
         
         let store = CNContactStore()
         let predicate = CNContact.predicateForContacts(matchingName: searchString)
-        let toFetch = [CNContactGivenNameKey, CNContactFamilyNameKey]
+        let toFetch = [CNContactGivenNameKey, CNContactFamilyNameKey, CNContactPhoneNumbersKey]
         
         filtered = []
         
         print("Got Here")
-    
         
-        do{
+//        if(searchString == ""){
+//        
+//        
+//        }else{
+//
+//        
+//        }
+        
+     
+        
+        do {
             let contacts = try store.unifiedContacts( matching: predicate, keysToFetch: toFetch as [CNKeyDescriptor])
             
-            do{
-                
-                print("Got Here 2")
-                
-                for contact in contacts{
-                    print("Got Here3")
-                    
-                    
-                    do{}
-                    
-                    
-                    
-                    //filtered.append(contact.givenName + " " + contact.familyName + "             " + ((contact.phoneNumbers[0].value)(forKey: "digits") as! String))
-                    
-                    
-                    filtered.append(contact.givenName + " " + contact.familyName)
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    print(contact.givenName)
-                    print(contact.familyName)
-                    //print(contact.phoneNumbers[0])
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    print("Got Here 4")
-                }
-                
-            }catch{
-                print("ERROR")
+            for contact in contacts{
+                filtered.append(contact.givenName + " " + contact.familyName + "            " + contact.phoneNumbers[0].value.stringValue)
             }
-            
+ 
             self.tableview.reloadData()
             
         } catch let err{
@@ -176,6 +143,7 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
         }
     
     }
+    
 
     
     
