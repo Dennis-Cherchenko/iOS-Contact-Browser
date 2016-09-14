@@ -19,10 +19,7 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
  
     var searchString = ""
     
-    //Change
-    
-    
-    let myarray = ["item1", "item2", "item3"]
+    var contactStore = CNContactStore()
     
     var filtered:[String] = []
     
@@ -34,7 +31,9 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
         tableview.dataSource = self
         tableview.delegate = self
         
-        filtered = myarray
+        filtered = []
+        
+        showContacts(searchString: searchString)
         
         
     }
@@ -50,21 +49,23 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
     
     /////////////////////////////////////////////////////////////////////////
     
+    //Search Bar Functions
+    
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         print("searchText \(searchText)")
         searchString = searchText
-        getContacts()
+        showContacts(searchString: searchString)
         
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         print("searchText \(searchBar.text)")
         searchString = searchBar.text!
-        getContacts()
+        showContacts(searchString: searchString)
     }
     
-    
+    /////////////////////////////////////////////////////////////////////////
 
     
     
@@ -103,30 +104,69 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
     }
     
     
+
     
     
-    private func getContacts() {
-        
-        
-        print(searchString)
+    
+    private func showContacts(searchString: String){
+    
         
         let store = CNContactStore()
         let predicate = CNContact.predicateForContacts(matchingName: searchString)
         let toFetch = [CNContactGivenNameKey, CNContactFamilyNameKey]
         
+        filtered = []
+        
+        print("Got Here")
+    
+        
         do{
-            let contacts = try store.unifiedContacts(
-                matching: predicate, keysToFetch: toFetch as [CNKeyDescriptor])
+            let contacts = try store.unifiedContacts( matching: predicate, keysToFetch: toFetch as [CNKeyDescriptor])
             
-            filtered = []
-            
-            for contact in contacts{
-                filtered.append(contact.givenName + " " + contact.familyName)
+            do{
                 
-                print(contact.givenName)
-                print(contact.familyName)
-                //print(contact.phoneNumbers)
+                print("Got Here 2")
                 
+                for contact in contacts{
+                    print("Got Here3")
+                    
+                    
+                    do{}
+                    
+                    
+                    
+                    //filtered.append(contact.givenName + " " + contact.familyName + "             " + ((contact.phoneNumbers[0].value)(forKey: "digits") as! String))
+                    
+                    
+                    filtered.append(contact.givenName + " " + contact.familyName)
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    print(contact.givenName)
+                    print(contact.familyName)
+                    //print(contact.phoneNumbers[0])
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    print("Got Here 4")
+                }
+                
+            }catch{
+                print("ERROR")
             }
             
             self.tableview.reloadData()
@@ -134,9 +174,10 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
         } catch let err{
             print(err)
         }
-        
-        
+    
     }
+
+    
     
     
 }
