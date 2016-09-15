@@ -3,6 +3,7 @@
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11161"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -23,13 +24,40 @@
                                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <prototypes>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="customcell" rowHeight="40" id="tGV-Tf-j3l">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="customcell" rowHeight="40" id="tGV-Tf-j3l" customClass="TableViewCell" customModule="Contact_Browser" customModuleProvider="target">
                                         <rect key="frame" x="0.0" y="28" width="375" height="40"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="tGV-Tf-j3l" id="EvR-AZ-2V2">
                                             <frame key="frameInset" width="375" height="39"/>
                                             <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" horizontalCompressionResistancePriority="1000" verticalCompressionResistancePriority="1000" ambiguous="YES" misplaced="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="v6Y-DB-YLc">
+                                                    <frame key="frameInset" minX="8" minY="10" width="183" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <nil key="textColor"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="Label" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eDo-RV-8aE">
+                                                    <frame key="frameInset" minX="199" minY="10" width="168" height="21"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="eDo-RV-8aE" firstAttribute="top" secondItem="EvR-AZ-2V2" secondAttribute="topMargin" constant="2" id="2WG-B8-kqM"/>
+                                                <constraint firstItem="eDo-RV-8aE" firstAttribute="leading" secondItem="v6Y-DB-YLc" secondAttribute="trailing" constant="8" id="XdU-BI-CGO"/>
+                                                <constraint firstAttribute="leadingMargin" secondItem="v6Y-DB-YLc" secondAttribute="leading" id="aBw-Yb-0vr"/>
+                                                <constraint firstItem="v6Y-DB-YLc" firstAttribute="top" secondItem="EvR-AZ-2V2" secondAttribute="topMargin" constant="2" id="eKC-5E-V0D"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="v6Y-DB-YLc" secondAttribute="bottom" id="gwa-7S-88Q"/>
+                                                <constraint firstAttribute="bottomMargin" secondItem="eDo-RV-8aE" secondAttribute="bottom" id="pLL-Zx-fW9"/>
+                                                <constraint firstAttribute="trailingMargin" secondItem="eDo-RV-8aE" secondAttribute="trailing" id="yap-Qv-ul5"/>
+                                            </constraints>
                                         </tableViewCellContentView>
+                                        <connections>
+                                            <outlet property="name" destination="v6Y-DB-YLc" id="09C-UQ-bgQ"/>
+                                            <outlet property="number" destination="eDo-RV-8aE" id="b0N-6D-M8F"/>
+                                        </connections>
                                     </tableViewCell>
                                 </prototypes>
                                 <connections>
