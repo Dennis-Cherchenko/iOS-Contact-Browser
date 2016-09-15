@@ -113,11 +113,45 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
         print(filtered[indexPath.row])
         
         let alert = UIAlertController(title: contactSelectMessage, message: filtered[indexPath.row], preferredStyle: UIAlertControllerStyle.alert)
-        alert.addAction(UIAlertAction(title: "Call", style: UIAlertActionStyle.default, handler: nil))
-        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.default, handler: nil))
+
+        alert.addAction(UIAlertAction(title: "Call", style: .default, handler: { action in
+            switch action.style{
+            case .default:
+                let phone = "tel://1234567890";
+                let url:NSURL = NSURL(string:phone)!;
+                UIApplication.shared.openURL(url as URL);
+                print("call success")
+                print(self.filtered[indexPath.row])
+                
+            case .cancel:
+                print("cancel")
+                
+            case .destructive:
+                print("destructive")
+            }
+        }))
+        
+        alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { action in
+            switch action.style{
+            case .default:
+                print("canceled success")
+                
+            case .cancel:
+                print("cancel")
+                
+            case .destructive:
+                print("destructive")
+            }
+        }))
+                
+                
         self.present(alert, animated: true, completion: nil)
     }
 
+    
+    
+    
+    
     
     
     
@@ -141,10 +175,10 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
                 let fetchRequest = CNContactFetchRequest(keysToFetch: [CNContactGivenNameKey as CNKeyDescriptor, CNContactFamilyNameKey as CNKeyDescriptor, CNContactPhoneNumbersKey as CNKeyDescriptor])
                
                 
+                
                 try! contactStore.enumerateContacts(with: fetchRequest) { contact, stop in
-                    
-                    
-                    if(contact.phoneNumbers.indices.contains(0)){
+
+                    if (contact.phoneNumbers == nil) {
                         self.filtered.append(contact.givenName + " " + contact.familyName + "            " + contact.phoneNumbers[0].value.stringValue)
                         self.tableview.reloadData()
                     }else{
@@ -166,7 +200,11 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
                 let contacts = try store.unifiedContacts( matching: predicate, keysToFetch: toFetch as [CNKeyDescriptor])
                 
                 for contact in contacts{
-                    filtered.append(contact.givenName + " " + contact.familyName + "            " + contact.phoneNumbers[0].value.stringValue)
+                    if (contact.phoneNumbers == nil) {
+                        self.filtered.append(contact.givenName + " " + contact.familyName + "            " + contact.phoneNumbers[0].value.stringValue)
+                    }else{
+                        self.filtered.append(contact.givenName + " " + contact.familyName + "            ")
+                    }
                 }
                 
                 self.tableview.reloadData()
