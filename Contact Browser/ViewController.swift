@@ -16,6 +16,7 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var tableview: UITableView!
     
+    @IBOutlet weak var topLabel: UILabel!
  
     var searchString = ""
     
@@ -25,6 +26,9 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
     
     let contactSelectMessage = "Do you want to call this contact?"
     
+    var selectedContactFirstName = ""
+    var selectedContactLastName = ""
+    var selectedContactPhoneNumber = ""
     
     
     
@@ -62,6 +66,12 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
         print("searchText \(searchText)")
         searchString = searchText
         showContacts(searchString: searchString)
+        if(searchString == ""){
+            self.topLabel.text = "All Contacts"
+        }else{
+            self.topLabel.text = "Results for '" + searchString + "'"
+        }
+        
         
     }
     
@@ -103,10 +113,6 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
     private func updateCells(_ tableView: UITableView, cellForRowAt indexPath: IndexPath){
         let cell = tableView.dequeueReusableCell(withIdentifier: "customcell", for: indexPath as IndexPath)
         cell.textLabel?.text = filtered[indexPath.item]
-        //return cell
-        
-        
-        
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -178,11 +184,8 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
                 
                 try! contactStore.enumerateContacts(with: fetchRequest) { contact, stop in
 
-                    if (contact.phoneNumbers == nil) {
+                    if (!contact.phoneNumbers.isEmpty) {
                         self.filtered.append(contact.givenName + " " + contact.familyName + "            " + contact.phoneNumbers[0].value.stringValue)
-                        self.tableview.reloadData()
-                    }else{
-                        self.filtered.append(contact.givenName + " " + contact.familyName + "            ")
                         self.tableview.reloadData()
                     }
                 }
@@ -200,10 +203,8 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
                 let contacts = try store.unifiedContacts( matching: predicate, keysToFetch: toFetch as [CNKeyDescriptor])
                 
                 for contact in contacts{
-                    if (contact.phoneNumbers == nil) {
+                    if (!contact.phoneNumbers.isEmpty) {
                         self.filtered.append(contact.givenName + " " + contact.familyName + "            " + contact.phoneNumbers[0].value.stringValue)
-                    }else{
-                        self.filtered.append(contact.givenName + " " + contact.familyName + "            ")
                     }
                 }
                 
