@@ -14,8 +14,6 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
     
     
     @IBOutlet weak var searchBar: UISearchBar!
-    
-    
     @IBOutlet weak var tableview: UITableView!
     
  
@@ -24,6 +22,12 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
     var contactStore = CNContactStore()
     
     var filtered:[String] = []
+    
+    let contactSelectMessage = "Do you want to call this contact?"
+    
+    
+    
+    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -105,7 +109,14 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
         
     }
     
-    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        print(filtered[indexPath.row])
+        
+        let alert = UIAlertController(title: contactSelectMessage, message: filtered[indexPath.row], preferredStyle: UIAlertControllerStyle.alert)
+        alert.addAction(UIAlertAction(title: "Call", style: UIAlertActionStyle.default, handler: nil))
+        alert.addAction(UIAlertAction(title: "Cancel", style: UIAlertActionStyle.default, handler: nil))
+        self.present(alert, animated: true, completion: nil)
+    }
 
     
     
@@ -116,6 +127,8 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
         let store = CNContactStore()
         let predicate = CNContact.predicateForContacts(matchingName: searchString)
         let toFetch = [CNContactGivenNameKey, CNContactFamilyNameKey, CNContactPhoneNumbersKey]
+        
+        
         
         filtered = []
         
@@ -130,8 +143,14 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
                 
                 try! contactStore.enumerateContacts(with: fetchRequest) { contact, stop in
                     
-                    self.filtered.append(contact.givenName + " " + contact.familyName + "            " + contact.phoneNumbers[0].value.stringValue)
-                    self.tableview.reloadData()
+                    
+                    if(contact.phoneNumbers.indices.contains(0)){
+                        self.filtered.append(contact.givenName + " " + contact.familyName + "            " + contact.phoneNumbers[0].value.stringValue)
+                        self.tableview.reloadData()
+                    }else{
+                        self.filtered.append(contact.givenName + " " + contact.familyName + "            ")
+                        self.tableview.reloadData()
+                    }
                 }
 
                 
