@@ -9,43 +9,31 @@
 import UIKit
 import Contacts
 
-class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate, UITableViewDataSource{
+class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate, UITableViewDataSource {
     
-    
+    // MARK: Variables
     
     @IBOutlet weak var searchBar: UISearchBar!
     @IBOutlet weak var tableview: UITableView!
-    
     @IBOutlet weak var topLabel: UILabel!
- 
+
+    // TODO: How to organize the networking files
+
+
     var searchString = ""
-    
-    var contactStore = CNContactStore()
-    
-    var filtered:[(fullName: String, phoneNumber: String)] = []
+    var contacts: Contacts = Contacts()
+    var filtered: [PersonInformation] = []
 
-
-    
-    var importedContacts = People()
-    
-    var selectedContactFirstName = ""
-    var selectedContactLastName = ""
-    var selectedContactPhoneNumber = ""
-    
-    
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        searchBar.delegate = self
-        
-        tableview.dataSource = self
-        tableview.delegate = self
-        
 
-        initializeContactsFromCNContacts()
+
+        initializeView()
+        contacts.initializeContacts()
+
         showContacts(searchString: searchString)
+
+        self.tableview.reloadData()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -57,13 +45,21 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
         super.didReceiveMemoryWarning()
     }
     
-    /////////////////////////////////////////////////////////////////////////
+
+    private func initializeView(){
+        searchBar.delegate = self
+        tableview.dataSource = self
+        tableview.delegate = self
+        self.tableview.reloadData()
+    }
     
-    //Search Bar Functions
     
+    
+    
+    
+    // MARK: searchBar functions
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        print("searchText \(searchText)")
         searchString = searchText
         showContacts(searchString: searchString)
         if(searchString == ""){
@@ -76,25 +72,14 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
-        print("searchText \(searchBar.text)")
         searchString = searchBar.text!
         showContacts(searchString: searchString)
     }
     
-    /////////////////////////////////////////////////////////////////////////
+
 
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    // MARK tableView Functions
     
     internal func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return filtered.count
@@ -103,132 +88,63 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
     
     internal func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "customcell", for: indexPath ) as! TableViewCell
-        
-        
-       cell.name.text = filtered[indexPath.row].fullName
+        cell.name.text = filtered[indexPath.row].fullName
         cell.number.text = filtered[indexPath.row].phoneNumber
         return cell
     }
     
-    
-    
-    func cleanPhoneNumber(number: String) -> String{
-        return (number.components(separatedBy: NSCharacterSet.decimalDigits.inverted)).joined(separator: "")
-    }
-
-    
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        
-        let contactMessage =  "Would you like to contact " +  filtered[indexPath.row].0 + " at number: " + filtered[indexPath.row].1 + " ?"
-        
-        let alert = UIAlertController(title: contactMessage, message: filtered[indexPath.row].0, preferredStyle: UIAlertControllerStyle.alert)
+
+        let contactMessage =  "Would you like to contact " +  filtered[indexPath.row].fullName + " at number: " + filtered[indexPath.row].phoneNumber + " ?"
+
+        let alert = UIAlertController(title: contactMessage, message: filtered[indexPath.row].firstName, preferredStyle: UIAlertControllerStyle.alert)
 
         alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { action in
             switch action.style{
             case .default:
 
-                let phone = "tel://" + self.cleanPhoneNumber(number: self.filtered[indexPath.row].1)
+                let phone = "tel://" + self.cleanPhoneNumber(number: self.filtered[indexPath.row].phoneNumber)
 
-                let url:NSURL = NSURL(string:phone)!
-                UIApplication.shared.openURL(url as URL)
-                print("call success")
-                
-            case .cancel:
-                print("cancel")
-                
-            case .destructive:
-                print("destructive")
+                UIApplication.shared.openURL(NSURL(string:phone)! as URL)
+
+            case .cancel: print() case .destructive: print()
+
             }
         }))
-        
+
         alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { action in
-            switch action.style{
-            case .default:
-                print("canceled success")
-                
-            case .cancel:
-                print("cancel")
-                
-            case .destructive:
-                print("destructive")
-            }
+            switch action.style{ case .default:print() case .cancel: print() case .destructive: print()}
         }))
-                
-                
+
+
         self.present(alert, animated: true, completion: nil)
     }
 
-    
-    
-    private func initializeContactsFromCNContacts(){
 
-        let contactStore = CNContactStore()
-        
-        do {
-            let fetchRequest = CNContactFetchRequest(keysToFetch: [CNContactGivenNameKey as CNKeyDescriptor, CNContactFamilyNameKey as CNKeyDescriptor, CNContactPhoneNumbersKey as CNKeyDescriptor])
-            
-            
-            
-            try! contactStore.enumerateContacts(with: fetchRequest) { contact, stop in
-                
-                if (!contact.phoneNumbers.isEmpty) {
-                    
-                    self.importedContacts.people.append(["firstName": contact.givenName,
-                                                  "lastName": contact.familyName,
-                                                  "phoneNumber": contact.phoneNumbers[0].value.stringValue])
-                    self.tableview.reloadData()
-                }
-            }
-            
-            
-        }catch{
-            print("ERROR")
-        }
-        
-        
-        print(importedContacts.people[5])
+    // MARK: Additional Functions
+
+
+    func cleanPhoneNumber(number: String) -> String {
+        return (number.components(separatedBy: NSCharacterSet.decimalDigits.inverted)).joined(separator: "")
     }
-    
-    private func checkIfContains(person: Dictionary<String, String>, searchString: String) -> Bool
-    {
-        if(person["firstName"]!.contains(searchString)){
-            return true
-        }else if(person["lastName"]!.contains(searchString)){
-            return true
-        }else{
-            return false
-        }
+
+    private func checkIfContains(person: PersonInformation, searchString: String) -> Bool {
+        return person.fullName.contains(searchString) || person.phoneNumber.contains(searchString)
     }
     
     
-    private func showContacts(searchString: String){
+    private func showContacts(searchString: String) {
         
         filtered = []
 
-        for person in importedContacts.people{
-
-            if person["phoneNumber"] != nil{
-
-                if searchString == ""{
-                    
-                    self.filtered.append((fullName: person["firstName"]! + " " + person["lastName"]!, phoneNumber: person["phoneNumber"]!))
-
-
-                } else if checkIfContains(person: person, searchString: searchString){
-
-                    self.filtered.append((fullName: person["firstName"]! + " " + person["lastName"]!, phoneNumber: person["phoneNumber"]!))
-                }
+        for person in contacts.contacts!{
+            if searchString == "" || checkIfContains(person: person, searchString: searchString){
+                
+                filtered.append(person)
             }
-
         }
         
         self.tableview.reloadData()
     }
-    
 
-    
-    
-    
 }
-
-
