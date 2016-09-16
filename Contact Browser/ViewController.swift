@@ -27,13 +27,33 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
     override func viewDidLoad() {
         super.viewDidLoad()
 
+        var store = CNContactStore()
 
-        initializeView()
-        contacts.initializeContacts()
+        switch CNContactStore.authorizationStatus(for: .contacts){
 
-        showContacts(searchString: searchString)
+        case .notDetermined:
+            store.requestAccess(for: .contacts){succeeded, err in
+                guard err == nil && succeeded else{
+                    return
+                }
+                print("case not determined")
+            }
 
-        self.tableview.reloadData()
+        case .authorized:
+            print("authorized")
+            print("got here 0")
+            initializeView()
+            print("got here 1")
+            contacts.initializeContacts()
+            print("got here 2")
+            showContacts(searchString: searchString)
+            print("got here 3")
+
+            self.tableview.reloadData()
+
+        default:
+            print("Not handled")
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -53,8 +73,8 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
         self.tableview.reloadData()
     }
     
-    
-    
+
+
     
     
     // MARK: searchBar functions
