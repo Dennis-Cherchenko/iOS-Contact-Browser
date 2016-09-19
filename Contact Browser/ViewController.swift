@@ -27,9 +27,9 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        var store = CNContactStore()
+        let store = CNContactStore()
 
-        switch CNContactStore.authorizationStatus(for: .contacts){
+        switch CNContactStore.authorizationStatus(for: .contacts) {
 
         case .notDetermined:
             store.requestAccess(for: .contacts){succeeded, err in
@@ -40,25 +40,36 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
             }
 
         case .authorized:
-            print("authorized")
-            print("got here 0")
-            initializeView()
-            print("got here 1")
-            contacts.initializeContacts()
-            print("got here 2")
-            showContacts(searchString: searchString)
-            print("got here 3")
 
-            self.tableview.reloadData()
+            initializeView()
+            contacts.initializeContacts()
+            showContacts(searchString: searchString)
+            print("success")
 
         default:
             print("Not handled")
+            alert(message: "hello")
+
         }
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         tableview.reloadData()
+        let alert = UIAlertController(title: "Please allow contact browser to access contacts", message: "", preferredStyle: UIAlertControllerStyle.alert)
+
+        alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { action in
+            switch action.style{
+            case .default:
+
+                UIApplication.shared.openURL(NSURL(string:UIApplicationOpenSettingsURLString)! as URL)
+
+            case .cancel: print() case .destructive: print()
+                
+            }
+        }))
+
+        self.present(alert, animated: true, completion: nil)
     }
     
     override func didReceiveMemoryWarning() {
@@ -66,7 +77,7 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
     }
     
 
-    private func initializeView(){
+    private func initializeView() {
         searchBar.delegate = self
         tableview.dataSource = self
         tableview.delegate = self
@@ -141,6 +152,17 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
     }
 
 
+    func alert(message: String) {
+
+        let alert = UIAlertController(title: message, message: "", preferredStyle: UIAlertControllerStyle.alert)
+
+        alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in })
+
+        self.present(alert, animated: true, completion: nil)
+
+    }
+
+
     // MARK: Additional Functions
 
 
@@ -158,8 +180,7 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
         filtered = []
 
         for person in contacts.contacts!{
-            if searchString == "" || checkIfContains(person: person, searchString: searchString){
-                
+            if searchString == "" || checkIfContains(person: person, searchString: searchString) {
                 filtered.append(person)
             }
         }
