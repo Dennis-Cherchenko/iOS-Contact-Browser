@@ -19,7 +19,7 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
 
     // TODO: How to organize the networking files
 
-
+    let store = CNContactStore()
     var searchString = ""
     var contacts: Contacts = Contacts()
     var filtered: [PersonInformation] = []
@@ -48,30 +48,68 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
 
         default:
             print("Not handled")
-            alert(message: "hello")
+
 
         }
     }
-    
+
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         tableview.reloadData()
+
+        switch CNContactStore.authorizationStatus(for: .contacts) {
+
+        case .notDetermined:
+            store.requestAccess(for: .contacts){succeeded, err in
+                guard err == nil && succeeded else{
+                    return
+                }
+                let alert = UIAlertController(title: "Please allow contact browser to access contacts", message: "", preferredStyle: UIAlertControllerStyle.alert)
+
+                alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { action in
+
+                    switch action.style{ case .default:print() case .cancel: print() case .destructive: print()}
+
+                }))
+
+                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { action in
+                    switch action.style{ case .default: UIApplication.shared.openURL(NSURL(string:UIApplicationOpenSettingsURLString)! as URL) case .cancel: print() case .destructive: print()}
+                }))
+                
+                self.present(alert, animated: true, completion: nil)
+            }
+
+        case .authorized: print()
+
+        default:
+            alert()
+            
+            
+        }
+
+
+    }
+
+
+
+    private func alert(){
         let alert = UIAlertController(title: "Please allow contact browser to access contacts", message: "", preferredStyle: UIAlertControllerStyle.alert)
 
+        alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { action in
+
+            switch action.style{ case .default:print() case .cancel: print() case .destructive: print()}
+
+        }))
+
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { action in
-            switch action.style{
-            case .default:
-
-                UIApplication.shared.openURL(NSURL(string:UIApplicationOpenSettingsURLString)! as URL)
-
-            case .cancel: print() case .destructive: print()
-                
-            }
+            switch action.style{ case .default: UIApplication.shared.openURL(NSURL(string:UIApplicationOpenSettingsURLString)! as URL) case .cancel: print() case .destructive: print()}
         }))
 
         self.present(alert, animated: true, completion: nil)
+
     }
-    
+
+
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()
     }
@@ -150,18 +188,6 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
 
         self.present(alert, animated: true, completion: nil)
     }
-
-
-    func alert(message: String) {
-
-        let alert = UIAlertController(title: message, message: "", preferredStyle: UIAlertControllerStyle.alert)
-
-        alert.addAction(UIAlertAction(title: "OK", style: .default) { _ in })
-
-        self.present(alert, animated: true, completion: nil)
-
-    }
-
 
     // MARK: Additional Functions
 
