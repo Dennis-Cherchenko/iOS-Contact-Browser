@@ -17,8 +17,6 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
     @IBOutlet weak var tableview: UITableView!
     @IBOutlet weak var topLabel: UILabel!
 
-    // TODO: How to organize the networking files
-
     let store = CNContactStore()
     var searchString = ""
     var contacts: Contacts = Contacts()
@@ -26,11 +24,8 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
         let store = CNContactStore()
-
         switch CNContactStore.authorizationStatus(for: .contacts) {
-
         case .notDetermined:
             store.requestAccess(for: .contacts){succeeded, err in
                 guard err == nil && succeeded else{
@@ -38,18 +33,13 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
                 }
                 print("case not determined")
             }
-
         case .authorized:
-
             initializeView()
             contacts.initializeContacts()
             showContacts(searchString: searchString)
             print("success")
-
         default:
             print("Not handled")
-
-
         }
     }
 
@@ -64,56 +54,25 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
                 guard err == nil && succeeded else{
                     return
                 }
-                let alert = UIAlertController(title: "Please allow contact browser to access contacts", message: "", preferredStyle: UIAlertControllerStyle.alert)
-
-                alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { action in
-
-                    switch action.style{ case .default:print() case .cancel: print() case .destructive: print()}
-
-                }))
-
-                alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { action in
-                    switch action.style{ case .default: UIApplication.shared.openURL(NSURL(string:UIApplicationOpenSettingsURLString)! as URL) case .cancel: print() case .destructive: print()}
-                }))
-                
-                self.present(alert, animated: true, completion: nil)
+                self.alert()
             }
-
         case .authorized: print()
-
         default:
             alert()
-            
-            
         }
-
-
     }
-
-
 
     private func alert(){
         let alert = UIAlertController(title: "Please allow contact browser to access contacts", message: "", preferredStyle: UIAlertControllerStyle.alert)
-
         alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { action in
 
             switch action.style{ case .default:print() case .cancel: print() case .destructive: print()}
-
         }))
-
         alert.addAction(UIAlertAction(title: "OK", style: .default, handler: { action in
             switch action.style{ case .default: UIApplication.shared.openURL(NSURL(string:UIApplicationOpenSettingsURLString)! as URL) case .cancel: print() case .destructive: print()}
         }))
-
         self.present(alert, animated: true, completion: nil)
-
     }
-
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-    }
-    
 
     private func initializeView() {
         searchBar.delegate = self
@@ -121,11 +80,7 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
         tableview.delegate = self
         self.tableview.reloadData()
     }
-    
 
-
-    
-    
     // MARK: searchBar functions
     
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
@@ -136,25 +91,19 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
         }else{
             self.topLabel.text = "Results for '" + searchString + "'"
         }
-        
-        
     }
     
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         searchString = searchBar.text!
         showContacts(searchString: searchString)
     }
-    
 
-
-    
     // MARK tableView Functions
     
     internal func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return filtered.count
     }
-    
-    
+
     internal func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "customcell", for: indexPath ) as! TableViewCell
         cell.name.text = filtered[indexPath.row].fullName
@@ -165,32 +114,22 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
 
         let contactMessage =  "Would you like to contact " +  filtered[indexPath.row].fullName + " at number: " + filtered[indexPath.row].phoneNumber + " ?"
-
         let alert = UIAlertController(title: contactMessage, message: filtered[indexPath.row].firstName, preferredStyle: UIAlertControllerStyle.alert)
-
         alert.addAction(UIAlertAction(title: "Yes", style: .default, handler: { action in
             switch action.style{
             case .default:
-
                 let phone = "tel://" + self.cleanPhoneNumber(number: self.filtered[indexPath.row].phoneNumber)
-
                 UIApplication.shared.openURL(NSURL(string:phone)! as URL)
-
             case .cancel: print() case .destructive: print()
-
             }
         }))
-
         alert.addAction(UIAlertAction(title: "Cancel", style: .default, handler: { action in
             switch action.style{ case .default:print() case .cancel: print() case .destructive: print()}
         }))
-
-
         self.present(alert, animated: true, completion: nil)
     }
 
     // MARK: Additional Functions
-
 
     func cleanPhoneNumber(number: String) -> String {
         return (number.components(separatedBy: NSCharacterSet.decimalDigits.inverted)).joined(separator: "")
@@ -200,18 +139,13 @@ class ViewController: UIViewController, UISearchBarDelegate, UITableViewDelegate
         return person.fullName.contains(searchString) || person.phoneNumber.contains(searchString)
     }
     
-    
     private func showContacts(searchString: String) {
-        
         filtered = []
-
         for person in contacts.contacts!{
             if searchString == "" || checkIfContains(person: person, searchString: searchString) {
                 filtered.append(person)
             }
         }
-        
         self.tableview.reloadData()
     }
-
 }

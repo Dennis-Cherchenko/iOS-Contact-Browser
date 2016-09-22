@@ -23,5 +23,4 @@ struct PersonInformation {
         self.lastName = lastName
         self.phoneNumber = phoneNumber
     }
-    
 }

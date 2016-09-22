@@ -17,30 +17,20 @@ class Contacts {
         initializeContacts()
     }
 
-    public func initializeContacts() {
-        
+    internal func initializeContacts() {
         let contactStore = CNContactStore()
-
         do {
-
             var temp: [PersonInformation] = []
             let fetchRequest = CNContactFetchRequest(keysToFetch: [CNContactGivenNameKey as CNKeyDescriptor, CNContactFamilyNameKey as CNKeyDescriptor, CNContactPhoneNumbersKey as CNKeyDescriptor])
-
             try contactStore.enumerateContacts(with: fetchRequest) { contact, stop in
-
                 if (!contact.phoneNumbers.isEmpty) {
-
                     let person = PersonInformation.init(firstName: contact.givenName, lastName: contact.familyName, phoneNumber: contact.phoneNumbers[0].value.stringValue)
                     temp.append(person)
-
                 }
             }
-
             contacts = temp
-
         }catch{
             print("ERROR")
         }
     }
-
 }
